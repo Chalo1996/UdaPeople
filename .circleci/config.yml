@@ -30,7 +30,7 @@ commands:
           name: Revert migrations
           when: << parameters.when >>
           command: |
-            SUCCESS=$(curl https://kvdb.io/L7f3pMr6HmhyHrvNGNNUwM/SUCCESS)
+            SUCCESS=$(curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/SUCCESS)
             if (( SUCCESS ));
             then
               cd ~/project/backend
