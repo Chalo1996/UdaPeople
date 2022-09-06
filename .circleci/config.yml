@@ -41,7 +41,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: cimg/python:3.8.4
+      - image: circleci/node:14.16-buster
     steps:
       - checkout
       - restore_cache:
@@ -58,7 +58,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: cimg/python:3.8.4
+      - image: circleci/node:14.16-buster
     steps:
       - checkout
       - restore_cache:
@@ -75,7 +75,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: cimg/python:3.8.4
+      - image: circleci/node:14.16-buster
     steps:
       - checkout
       - restore_cache:
@@ -92,7 +92,7 @@ jobs:
 
   test-backend:
     docker:
-      - image: cimg/python:3.8.4
+      - image: circleci/node:14.16-buster
     steps:
       - checkout
       - restore_cache:
@@ -110,7 +110,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: cimg/python:3.8.4
+      - image: circleci/node:14.16-buster
     steps:
       - checkout
       - restore_cache:
@@ -128,7 +128,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/python:3.8.4
+      - image: circleci/node:14.16-buster
     steps:
       - checkout
       - restore_cache:
@@ -225,7 +225,7 @@ jobs:
 
 #   run-migrations:
 #     docker:
-#       - image: cimg/python:3.8.4
+#       - image: circleci/node:14.16-buster
 #     steps:
 #       - checkout
 #       - restore_cache:
