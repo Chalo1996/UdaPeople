@@ -1,42 +1,42 @@
 version: 2.1
 
-commands:
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    # parameters:
-    #   when:
-    #     type: string
-    #   id:
-    #     type: string
-    steps:
-      - run:
-          name: Destroy environments backend
-          when: << parameters.when >>
-          command: |
-            # echo "Destroying environment: << parameters.id >> "
-            # aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
-            # aws s3 rm s3://udapeople-<< parameters.id >> --recursive
-            # aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
+# commands:
+#   destroy-environment:
+#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+#     # parameters:
+#     #   when:
+#     #     type: string
+#     #   id:
+#     #     type: string
+#     steps:
+#       - run:
+#           name: Destroy environments backend
+#           when: << parameters.when >>
+#           command: |
+#             # echo "Destroying environment: << parameters.id >> "
+#             # aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
+#             # aws s3 rm s3://udapeople-<< parameters.id >> --recursive
+#             # aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
 
-  revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      # when:
-      #   type: string
-      # id:
-      #   type: string
-    steps:
-      - run:
-          name: Revert migrations
-          # when: << parameters.when >>
-          command: |
-            SUCCESS=$(curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/SUCCESS)
-            if (( SUCCESS ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migrations:revert
-            fi
+#   revert-migrations:
+#     description: Revert the last migration if successfully run in the current workflow.
+#     parameters:
+#       # when:
+#       #   type: string
+#       # id:
+#       #   type: string
+#     steps:
+#       - run:
+#           name: Revert migrations
+#           # when: << parameters.when >>
+#           command: |
+#             SUCCESS=$(curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/SUCCESS)
+#             if (( SUCCESS ));
+#             then
+#               cd ~/project/backend
+#               npm install
+#               npm run migrations:revert
+#             fi
 
 jobs:
   build-frontend:
@@ -116,6 +116,7 @@ workflows:
         requires: [build-frontend]
       - test-backend:
         requires: [build-backend]
+  
 
   # scan-frontend:
   #   docker:
