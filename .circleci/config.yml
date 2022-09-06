@@ -106,16 +106,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-test
-
-workflows:
-  default:
-    jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-        requires: [build-frontend]
-      - test-backend:
-        requires: [build-backend]
   
 
   # scan-frontend:
@@ -463,15 +453,15 @@ workflows:
 #             ansible-playbook  node-exporter.yml -i inventory.txt
 
 
-# workflows:
-#   default:
-#     jobs:
-#       - build-frontend
-#       - build-backend
-#       - test-frontend:
-#           requires: [build-frontend]
-#       - test-backend:
-#           requires: [build-backend]
+workflows:
+  default:
+    jobs:
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
 #       - scan-frontend:
 #           requires: [build-frontend]
 #       - scan-backend:
