@@ -187,41 +187,41 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 
-#   configure-infrastructure:
-#     docker:
-#       - image: python:3.7-alpine3.11
-#     steps:
-#       - checkout
-#       - add_ssh_keys:
-#           fingerprints: ["d3:f8:a8:d7:34:2a:8b:95:4c:03:89:79:7b:e0:86:97"]
-#       - attach_workspace:
-#           at: ~/
-#       - run:
-#           name: install dependancies needed for my paybook
-#           command: |
-#             apk add --update ansible
-#             apk add --update tar gzip
-#             apk add --update curl
-#             apk add --no-cache \
-#             python3 \
-#             py3-pip \
-#             && pip3 install --upgrade pip \
-#             && pip3 install --no-cache-dir \
-#             awscli \
-#             && rm -rf /var/cache/apk/*
-#             echo "insecure" >> ~/.curlrc
-#       - run:
-#           name: configuring infrastructure
-#           command: |
-#             cd .circleci/ansible
-#             ansible-playbook -i inventory.txt configure-server.yml
-#       - persist_to_workspace:
-#           root: ~/
-#           paths:
-#             - project/.circleci/ansible/inventory.txt
-#       - destroy-environment:
-#           id: ${CIRCLE_WORKFLOW_ID:0:7}
-#           when: on_fail
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["d3:f8:a8:d7:34:2a:8b:95:4c:03:89:79:7b:e0:86:97"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: install dependancies needed for my paybook
+          command: |
+            apk add --update ansible
+            apk add --update tar gzip
+            apk add --update curl
+            apk add --no-cache \
+            python3 \
+            py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install --no-cache-dir \
+            awscli \
+            && rm -rf /var/cache/apk/*
+            echo "insecure" >> ~/.curlrc
+      - run:
+          name: configuring infrastructure
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail
 
 #   run-migrations:
 #     docker:
@@ -471,8 +471,8 @@ workflows:
           filters:
             branches:
               only: [master]
-#       - configure-infrastructure:
-#           requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
 #       - run-migrations:
 #           requires: [configure-infrastructure]
 #       - deploy-frontend:
