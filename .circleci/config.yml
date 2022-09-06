@@ -1,42 +1,42 @@
 version: 2.1
 
-commands:
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      when:
-        type: string
-      id:
-        type: string
-    steps:
-      - run:
-          name: Destroy environments backend
-          when: << parameters.when >>
-          command: |
-            echo "Destroying environment: << parameters.id >> "
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
-            aws s3 rm s3://udapeople-<< parameters.id >> --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
+# commands:
+#   destroy-environment:
+#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+#     parameters:
+#       when:
+#         type: string
+#       id:
+#         type: string
+#     steps:
+#       - run:
+#           name: Destroy environments backend
+#           when: << parameters.when >>
+#           command: |
+#             echo "Destroying environment: << parameters.id >> "
+#             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
+#             aws s3 rm s3://udapeople-<< parameters.id >> --recursive
+#             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
 
-  revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      when:
-        type: string
-      id:
-        type: string
-    steps:
-      - run:
-          name: Revert migrations
-          when: << parameters.when >>
-          command: |
-            SUCCESS=$(curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/SUCCESS)
-            if (( SUCCESS ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migrations:revert
-            fi
+#   revert-migrations:
+#     description: Revert the last migration if successfully run in the current workflow.
+#     parameters:
+#       when:
+#         type: string
+#       id:
+#         type: string
+#     steps:
+#       - run:
+#           name: Revert migrations
+#           when: << parameters.when >>
+#           command: |
+#             SUCCESS=$(curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/SUCCESS)
+#             if (( SUCCESS ));
+#             then
+#               cd ~/project/backend
+#               npm install
+#               npm run migrations:revert
+#             fi
 
 jobs:
   build-frontend:
@@ -108,43 +108,43 @@ jobs:
           key: backend-test
   
 
-  scan-frontend:
-    docker:
-      - image: circleci/node:14.16-buster
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [frontend_restore]
-      - run:
-          name: Scan frontend
-          command: |
-            cd frontend
-            # npm install oauth-sign@^0.9.0
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend_restore
+  # scan-frontend:
+  #   docker:
+  #     - image: circleci/node:14.16-buster
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [frontend_restore]
+  #     - run:
+  #         name: Scan frontend
+  #         command: |
+  #           cd frontend
+  #           # npm install oauth-sign@^0.9.0
+  #           npm audit fix --audit-level=critical --force
+  #           npm audit --audit-level=critical
+  #     - save_cache:
+  #         paths: [frontend/node_modules]
+  #         key: frontend_restore
 
-  scan-backend:
-    docker:
-      - image: circleci/node:14.16-buster
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend_restore]
-      - run:
-          name: Scan backend
-          command: |
-            cd backend
-            npm install
-            # npm install oauth-sign@^0.9.0
-            npm audit fix --audit-level=critical --force
-            npm audit fix --audit-level=critical
-            npm audit fix --force
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend_restore
+  # scan-backend:
+  #   docker:
+  #     - image: circleci/node:14.16-buster
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [backend_restore]
+  #     - run:
+  #         name: Scan backend
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           # npm install oauth-sign@^0.9.0
+  #           npm audit fix --audit-level=critical --force
+  #           npm audit fix --audit-level=critical
+  #           npm audit fix --force
+  #     - save_cache:
+  #         paths: [backend/node_modules]
+  #         key: backend_restore
 
 #   deploy-infrastructure:
 #     docker:
@@ -462,10 +462,10 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
 #       - deploy-infrastructure:
 #           requires: [test-frontend, test-backend, scan-frontend, build-backend]
 #           filters:
