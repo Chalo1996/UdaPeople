@@ -321,7 +321,7 @@ jobs:
             echo "Contents  of the inventory.txt file is ------- $(tail -1 inventory.txt)"
             cat inventory.txt
             ls -l ~/project/
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            ansible-playbook -i inventory.txt .circleci/ansible/deploy-backend.yml
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
