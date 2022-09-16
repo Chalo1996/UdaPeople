@@ -247,87 +247,85 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 
-  # deploy-frontend:
-  #   docker:
-  #     - image: python:3.9.0-alpine
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: install dependencies
-  #         command: |
-  #           apk add --no-cache \
-  #           python3 \
-  #           py3-pip \
-  #           && pip3 install --upgrade pip \
-  #           && pip3 install \
-  #           awscli \
-  #           && rm -rf /var/cache/apk/*
-  #           apk add --update ansible
-  #           apk add --update curl
-  #           apk add --update nodejs
-  #           apk add --update npm
-  #           apk add --update tar                        
-  #           apk add --update gzip
-  #     - run:
-  #         name: Get backend url
-  #         command: |
-  #           export BACKEND_IP=$(aws ec2 describe-instances \
-  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #             --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-  #             --output text)
-  #           export API_URL="http://${BACKEND_IP}:3030"
-  #           echo "API_URL = ${API_URL}"
-  #           echo API_URL="http://${BACKEND_IP}:3030" > frontend/.env
-  #           cat frontend/.env
-  #           echo "frontend link"
-  #           echo "https://udapeople-${CIRCLE_WORKFLOW_ID}.s3.amazonaws.com/index.html"
-  #     - run:
-  #         name: Deploy frontend objects
-  #         command: |
-  #           cd frontend
-  #           npm install
-  #           npm run build
-  #           tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-  #           aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-  #           aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
-  #     - destroy-environment:
-  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
-  #         when: on_fail
-
-  deploy-backend:
+  deploy-frontend:
     docker:
-      - image: python:3.10-alpine3.16
+      - image: python:3.9.0-alpine
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: ["f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c"]
-      - run:
-          name: install dependencies
-          command: |
-            apk add --update --no-cache tar gzip ansible aws-cli openssh nodejs npm tree curl
       - attach_workspace:
           at: ~/
       - run:
-          name: Deploy backend
+          name: install dependencies
           command: |
-            cd backend
+            apk add --no-cache \
+            python3 \
+            py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install \
+            awscli \
+            && rm -rf /var/cache/apk/*
+            apk add --update ansible
+            apk add --update curl
+            apk add --update nodejs
+            apk add --update npm
+            apk add --update tar                        
+            apk add --update gzip
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" > frontend/.env
+            cat frontend/.env
+            echo "frontend link"
+            echo "https://udapeople-${CIRCLE_WORKFLOW_ID}.s3.amazonaws.com/index.html"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
             npm install
             npm run build
-            cd ..
-            tar -C backend -czvf artifact.tar.gz .
-            cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is ------- $(tail -1 inventory.txt)"
-            cat inventory.txt
-            ls -l ~/project/
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-      - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+
+  deploy-backend:
+    docker:
+      - image: python:3.9.1-alpine3.12
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c"
+      - restore_cache:
+          keys: [backend-build]
+      - attach_workspace:
+          at: /tmp/artifacts
+      - run:
+          name: Install dependencies
+          command: |
+            apk update
+            apk add --update ansible aws-cli openssh-client tar
+      - run:
+          name: compress backend
+          command: |
+            tar -C /tmp/artifacts/backend -czvf artifact.tar.gz .
+      - run:
+          name: Deploy backend
+          command: |
+            cd .circleci/ansible
+            export ANSIBLE_HOST_KEY_CHECKING=False
+            ansible-playbook -i /tmp/artifacts/inventory.txt deploy-backend.yml
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID}"
+
 
   # smoke-test:
   #   docker:
@@ -475,8 +473,8 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
       # - smoke-test:
