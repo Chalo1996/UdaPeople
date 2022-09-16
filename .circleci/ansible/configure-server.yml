@@ -24,10 +24,10 @@
     - name: "upgrade"
       apt: upgrade=dist force_apt_get=yes
 
-    - name: "install python for Ansible."
-      # Your code here
-        raw: apt-get -y install python-minimal
-        register: py_minimal_output
+    # - name: "install python for Ansible."
+    #   # Your code here
+    #     raw: apt-get -y install python-minimal
+    #     register: py_minimal_output
 
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
