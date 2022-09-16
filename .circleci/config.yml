@@ -325,6 +325,7 @@ jobs:
             ansible-playbook -i /tmp/artifacts/inventory.txt deploy-backend.yml
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID}"
+          when: on_fail
 
 
   # smoke-test:
