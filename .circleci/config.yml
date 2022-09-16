@@ -187,147 +187,147 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 
-  configure-infrastructure:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c"]
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: install dependancies needed for my playbook
-          command: |
-            apk add --update ansible
-            apk add --update tar gzip
-            apk add --update curl
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install --no-cache-dir \
-            awscli \
-            && rm -rf /var/cache/apk/*
-            echo "insecure" >> ~/.curlrc
-      - run:
-          name: configuring infrastructure
-          command: |
-            # cd .circleci/ansible
-            ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+  # configure-infrastructure:
+  #   docker:
+  #     - image: python:3.7-alpine3.11
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #         fingerprints: ["f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c"]
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: install dependancies needed for my playbook
+  #         command: |
+  #           apk add --update ansible
+  #           apk add --update tar gzip
+  #           apk add --update curl
+  #           apk add --no-cache \
+  #           python3 \
+  #           py3-pip \
+  #           && pip3 install --upgrade pip \
+  #           && pip3 install --no-cache-dir \
+  #           awscli \
+  #           && rm -rf /var/cache/apk/*
+  #           echo "insecure" >> ~/.curlrc
+  #     - run:
+  #         name: configuring infrastructure
+  #         command: |
+  #           # cd .circleci/ansible
+  #           ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
+  #     - persist_to_workspace:
+  #         root: ~/
+  #         paths:
+  #           - project/.circleci/ansible/inventory.txt
+  #     - destroy-environment:
+  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
+  #         when: on_fail
 
-  run-migrations:
-    docker:
-      - image: circleci/node:14.16-buster
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend_restore]
-      - run:
-          name: Run migrations
-          command: |
-            cd backend
-            npm install
-            npm run migrations > migrations_dump.txt
-      - run:
-          name: Send migration to memcache
-          command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-            then
-              curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
-            fi
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+  # run-migrations:
+  #   docker:
+  #     - image: circleci/node:14.16-buster
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [backend_restore]
+  #     - run:
+  #         name: Run migrations
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm run migrations > migrations_dump.txt
+  #     - run:
+  #         name: Send migration to memcache
+  #         command: |
+  #           if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+  #           then
+  #             curl https://kvdb.io/56vh4oJCEiBXg9JpZtg87n/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+  #           fi
+  #     - destroy-environment:
+  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
+  #         when: on_fail
 
-  deploy-frontend:
-    docker:
-      - image: python:3.9.0-alpine
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: install dependencies
-          command: |
-            apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-            awscli \
-            && rm -rf /var/cache/apk/*
-            apk add --update ansible
-            apk add --update curl
-            apk add --update nodejs
-            apk add --update npm
-            apk add --update tar                        
-            apk add --update gzip
-      - run:
-          name: Get backend url
-          command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" > frontend/.env
-            cat frontend/.env
-            echo "frontend link"
-            echo "https://udapeople-${CIRCLE_WORKFLOW_ID}.s3.amazonaws.com/index.html"
-      - run:
-          name: Deploy frontend objects
-          command: |
-            cd frontend
-            npm install
-            npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+  # deploy-frontend:
+  #   docker:
+  #     - image: python:3.9.0-alpine
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: install dependencies
+  #         command: |
+  #           apk add --no-cache \
+  #           python3 \
+  #           py3-pip \
+  #           && pip3 install --upgrade pip \
+  #           && pip3 install \
+  #           awscli \
+  #           && rm -rf /var/cache/apk/*
+  #           apk add --update ansible
+  #           apk add --update curl
+  #           apk add --update nodejs
+  #           apk add --update npm
+  #           apk add --update tar                        
+  #           apk add --update gzip
+  #     - run:
+  #         name: Get backend url
+  #         command: |
+  #           export BACKEND_IP=$(aws ec2 describe-instances \
+  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+  #             --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+  #             --output text)
+  #           export API_URL="http://${BACKEND_IP}:3030"
+  #           echo "API_URL = ${API_URL}"
+  #           echo API_URL="http://${BACKEND_IP}:3030" > frontend/.env
+  #           cat frontend/.env
+  #           echo "frontend link"
+  #           echo "https://udapeople-${CIRCLE_WORKFLOW_ID}.s3.amazonaws.com/index.html"
+  #     - run:
+  #         name: Deploy frontend objects
+  #         command: |
+  #           cd frontend
+  #           npm install
+  #           npm run build
+  #           tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+  #           aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+  #           aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+  #     - destroy-environment:
+  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
+  #         when: on_fail
 
-  deploy-backend:
-    docker:
-      - image: python:3.10-alpine3.16
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c"]
-      - run:
-          name: install dependencies
-          command: |
-            apk add --update --no-cache tar gzip ansible aws-cli openssh nodejs npm tree curl
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Deploy backend
-          command: |
-            cd backend
-            npm install
-            npm run build
-            cd ..
-            tar -C backend -czvf artifact.tar.gz .
-            cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is ------- $(tail -1 inventory.txt)"
-            cat inventory.txt
-            ls -l ~/project/
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
-      - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+  # deploy-backend:
+  #   docker:
+  #     - image: python:3.10-alpine3.16
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #         fingerprints: ["f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c"]
+  #     - run:
+  #         name: install dependencies
+  #         command: |
+  #           apk add --update --no-cache tar gzip ansible aws-cli openssh nodejs npm tree curl
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Deploy backend
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm run build
+  #           cd ..
+  #           tar -C backend -czvf artifact.tar.gz .
+  #           cd .circleci/ansible
+  #           echo "Contents  of the inventory.txt file is ------- $(tail -1 inventory.txt)"
+  #           cat inventory.txt
+  #           ls -l ~/project/
+  #           ansible-playbook -i inventory.txt deploy-backend.yml
+  #     - destroy-environment:
+  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
+  #         when: on_fail
+  #     - revert-migrations:
+  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
+  #         when: on_fail
 
   # smoke-test:
   #   docker:
@@ -471,14 +471,14 @@ workflows:
           filters:
             branches:
               only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
