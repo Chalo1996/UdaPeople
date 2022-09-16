@@ -335,7 +335,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ./infra/ansible/
+          at: ~/
       - add_ssh_keys:
           fingerprints:
             - 'f2:c3:1c:24:96:da:6b:87:f6:a2:3c:c3:a7:aa:75:2c'
@@ -353,9 +353,9 @@ jobs:
             cd infra/ansible/
             ansible-playbook deploy-backend.yml
       - destroy-environment:
-          workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+          id: '${CIRCLE_WORKFLOW_ID:0:7}'
       - revert-migrations:
-          workflow_id: '${CIRCLE_WORKFLOW_ID:0:7}'
+          id: '${CIRCLE_WORKFLOW_ID:0:7}'
 
   # smoke-test:
   #   docker:
