@@ -742,7 +742,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: install dependancies needed for my playbook
+          name: nstall dependancies needed for my playbook
           command: |
             apk add --update openssh-client git
             apk add --update ansible
@@ -757,7 +757,7 @@ jobs:
             && rm -rf /var/cache/apk/*
             echo "insecure" >> ~/.curlrc
       - run:
-          name: configuring infrastructure
+          name: Configure server
           command: |
             # cd .circleci/ansible
             ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
@@ -767,7 +767,7 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+          # when: on_fail
 
   # deploy-frontend:
   #   docker:
