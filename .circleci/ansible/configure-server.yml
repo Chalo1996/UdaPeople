@@ -17,7 +17,7 @@
       # Your code here
       wait_for_connection:
         delay: 60
-        timeout: 800
+        timeout: 600
     - name: "wait."
       # Your code here
       apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
