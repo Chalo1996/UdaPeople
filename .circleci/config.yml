@@ -907,7 +907,8 @@ jobs:
   #             aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
   #             aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
   #             aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
-  #           fi        
+  #           fi
+ 
 workflows:
   default:
     jobs:
@@ -931,47 +932,47 @@ workflows:
             - test-backend
           filters:
             branches:
-              only: master
+              only: main
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
           filters:
             branches:
-              only: master
+              only: main
       - run-migrations:
           requires:
             - configure-infrastructure
           filters:
             branches:
-              only: master
+              only: main
       # - deploy-frontend:
       #     requires:
       #       - configure-infrastructure
       #     filters:
       #       branches:
-      #         only: master
+      #         only: main
       - deploy-backend:
           requires:
             - configure-infrastructure
             - run-migrations
           filters:
             branches:
-              only: master
+              only: main
       # - smoke-test:
       #     requires:
       #       - deploy-backend
       #     filters:
       #       branches:
-      #         only: master
+      #         only: main
       # - cloudfront-update:
       #     requires:
       #       - smoke-test
       #     filters:
       #       branches:
-      #         only: master
+      #         only: main
       # - cleanup:
       #     requires:
       #       - cloudfront-update
       #     filters:
       #       branches:
-      #         only: master
+      #         only: main
