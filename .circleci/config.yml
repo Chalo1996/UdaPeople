@@ -106,7 +106,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-test
-  
 
   scan-frontend:
     docker:

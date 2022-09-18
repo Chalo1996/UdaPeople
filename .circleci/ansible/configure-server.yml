@@ -16,11 +16,11 @@
     - name: "wait 600 seconds for target connection to become reachable/usable."
       # Your code here
       wait_for_connection:
-        delay: 60
+        delay: 200
         timeout: 1200
     - name: "wait."
       # Your code here
-      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=7200
     - name: "upgrade"
       apt: upgrade=dist force_apt_get=yes
 
