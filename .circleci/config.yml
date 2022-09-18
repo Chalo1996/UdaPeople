@@ -213,7 +213,7 @@ jobs:
       - run:
           name: configuring infrastructure
           command: |
-            #cd .circleci/ansible
+            cd .circleci/ansible
             ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
       - persist_to_workspace:
           root: ~/
