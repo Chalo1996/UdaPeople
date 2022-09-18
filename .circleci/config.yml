@@ -235,7 +235,9 @@ jobs:
           command: |
             cd backend
             sudo npm update -g npm
+            sudo npm fund
             sudo npm install
+            sudo npm audit fix
             sudo npm run migrations > migrations_dump.txt
       - run:
           name: Send migration to memcache
