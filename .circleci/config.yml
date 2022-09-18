@@ -41,7 +41,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -58,7 +58,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -75,7 +75,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -92,7 +92,7 @@ jobs:
 
   test-backend:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -109,7 +109,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -128,7 +128,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -225,7 +225,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/ruby:3.0.3-browsers
+      - image: cimg/node:12.16
     steps:
       - checkout
       - restore_cache:
@@ -528,7 +528,7 @@ workflows:
 # jobs:
 #   build-frontend:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
     
 #     steps:
 #       - checkout
@@ -546,7 +546,7 @@ workflows:
 
 #   build-backend:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
     
 #     steps:
 #       - checkout
@@ -564,7 +564,7 @@ workflows:
 
 #   test-frontend:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
 
 #     steps:
 #       - checkout
@@ -582,7 +582,7 @@ workflows:
 
 #   test-backend:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
 
 #     steps:
 #       - checkout
@@ -600,7 +600,7 @@ workflows:
 
 #   scan-frontend:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
     
 #     steps:
 #       - checkout
@@ -619,7 +619,7 @@ workflows:
 
 #   scan-backend:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
     
 #     steps:
 #       - checkout
@@ -708,7 +708,7 @@ workflows:
 
 #   run-migrations:
 #     docker:
-#       - image:  cimg/ruby:3.0.3-browsers
+#       - image:  cimg/node:12.16
 #     steps:
 #       - checkout
 #       - attach_workspace:
