@@ -199,7 +199,12 @@ jobs:
       - run:
           name: install dependancies needed for my playbook
           command: |
+            apk add --update openssh-client git
             apk add --update ansible
+            apk add --update aws-cli
+#             apk add --update tar
+#             apk add --update gzip
+            # apk add --update ansible
             apk add --update tar gzip
             apk add --update curl
             apk add --no-cache \
