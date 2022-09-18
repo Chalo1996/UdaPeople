@@ -449,8 +449,8 @@ jobs:
       - run:
           name: Configure node_exporter
           command: |
-            cd .circleci/ansible
-            cat inventory.txt
+            # cd .circleci/ansible
+            cat .circleci/ansible/inventory.txt
             ansible-playbook  node-exporter.yml -i inventory.txt
 
 
